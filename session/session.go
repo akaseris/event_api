@@ -105,7 +105,13 @@ func Remove(index int) bool {
 	}
 
 	// Converting to prefered form and writing data to file
-	len, err := newFile.WriteString("[\"" + strings.Join(arrData, "\",\"") + "\"]")
+	var str string
+	if len(arrData) == 0 {
+		str = "[]"
+	} else {
+		str = "[\"" + strings.Join(arrData, "\",\"") + "\"]"
+	}
+	len, err := newFile.WriteString(str)
 	if err != nil {
 		log.Fatalf("failed writing to file: %s with length %d", err, len)
 		return false
