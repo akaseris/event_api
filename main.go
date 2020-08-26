@@ -6,10 +6,32 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/akaseris/event_api/session"
 	"github.com/gorilla/mux"
 )
 
 var acceptedTypes = []string{"SESSION_START", "EVENT", "SESSION_END"}
+
+func handleSessionStart(jsonData []map[string]interface{}, w http.ResponseWriter) bool {
+	if str, ok := jsonData[0]["session_id"].(string); ok {
+		found := session.Find(str)
+		if found > -1 {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(`{"error": "Session already exists"}`))
+			return false
+		} else if found < -1 {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(`{"error": "Error searching for sessions"}`))
+			return false
+		} else {
+			session.Add(str)
+			return true
+		}
+	}
+	w.WriteHeader(http.StatusBadRequest)
+	w.Write([]byte(`{"error": "Session is not a string"}`))
+	return false
+}
 
 func get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -41,6 +63,13 @@ func post(w http.ResponseWriter, r *http.Request) {
 		if jsonData[i]["type"] != "SESSION_START" && jsonData[i]["type"] != "SESSION_END" && jsonData[i]["type"] != "EVENT" {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte(`{"error": "wrong type"}`))
+			return
+		}
+	}
+
+	// Handle SESSION_START
+	if jsonData[0]["type"] == "SESSION_START" {
+		if ok := handleSessionStart(jsonData, w); !ok {
 			return
 		}
 	}
