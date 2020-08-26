@@ -11,10 +11,10 @@ import (
 
 var fileName string = "active_sessions.txt"
 
-func find(file string, id string) int {
+func find(id string) int {
 	// Reading File
 	wDir, err := os.Getwd()
-	data, err := ioutil.ReadFile(wDir + "\\" + file)
+	data, err := ioutil.ReadFile(wDir + "\\" + fileName)
 	if err != nil {
 		log.Panicf("failed reading data from file: %s", err)
 		return -2
@@ -37,10 +37,10 @@ func find(file string, id string) int {
 	return -1
 }
 
-func add(file string, id string) bool {
+func add(id string) bool {
 	// Reading File
 	wDir, err := os.Getwd()
-	data, err := ioutil.ReadFile(wDir + "\\" + file)
+	data, err := ioutil.ReadFile(wDir + "\\" + fileName)
 	if err != nil {
 		log.Panicf("failed reading data from file: %s", err)
 		return false
@@ -58,7 +58,7 @@ func add(file string, id string) bool {
 	arrData = append(arrData, id)
 
 	// Creating file to overwrite the old one
-	newFile, err := os.Create(file)
+	newFile, err := os.Create(fileName)
 	if err != nil {
 		log.Fatalf("failed creating file: %s", err)
 		return false
@@ -74,10 +74,10 @@ func add(file string, id string) bool {
 	return true
 }
 
-func remove(file string, index int) bool {
+func remove(index int) bool {
 	// Reading File
 	wDir, err := os.Getwd()
-	data, err := ioutil.ReadFile(wDir + "\\" + file)
+	data, err := ioutil.ReadFile(wDir + "\\" + fileName)
 	if err != nil {
 		log.Panicf("failed reading data from file: %s", err)
 		return false
@@ -95,7 +95,7 @@ func remove(file string, index int) bool {
 	arrData = append(arrData[:index], arrData[index+1:]...)
 
 	// Creating file to overwrite the old one
-	newFile, err := os.Create(file)
+	newFile, err := os.Create(fileName)
 	if err != nil {
 		log.Fatalf("failed creating file: %s", err)
 		return false
