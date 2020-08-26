@@ -11,7 +11,8 @@ import (
 
 var fileName string = "active_sessions.txt"
 
-func find(id string) int {
+// Find id
+func Find(id string) int {
 	// Reading File
 	wDir, err := os.Getwd()
 	data, err := ioutil.ReadFile(wDir + "\\" + fileName)
@@ -37,7 +38,8 @@ func find(id string) int {
 	return -1
 }
 
-func add(id string) bool {
+// Add id
+func Add(id string) bool {
 	// Reading File
 	wDir, err := os.Getwd()
 	data, err := ioutil.ReadFile(wDir + "\\" + fileName)
@@ -74,7 +76,8 @@ func add(id string) bool {
 	return true
 }
 
-func remove(index int) bool {
+// Remove id
+func Remove(index int) bool {
 	// Reading File
 	wDir, err := os.Getwd()
 	data, err := ioutil.ReadFile(wDir + "\\" + fileName)
