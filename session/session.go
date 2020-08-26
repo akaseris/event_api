@@ -1,4 +1,4 @@
-package sessions
+package session
 
 // importing the required packages
 import (
