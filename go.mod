@@ -1,4 +1,4 @@
-module event_api
+module github.com/akaseris/event_api
 
 go 1.15
 
