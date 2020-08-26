@@ -3,7 +3,6 @@ package session
 // importing the required packages
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -43,7 +42,6 @@ func Find(id string) int {
 func Add(id string) bool {
 	// Reading File
 	wDir, err := os.Getwd()
-	fmt.Println(wDir + "\\" + fileName)
 	data, err := ioutil.ReadFile(wDir + "\\" + fileName)
 	if err != nil {
 		log.Panicf("failed reading data from file: %s", err)
