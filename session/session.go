@@ -3,13 +3,14 @@ package session
 // importing the required packages
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
 )
 
-var fileName string = "active_sessions.txt"
+var fileName string = "session\\active_sessions.txt"
 
 // Find id
 func Find(id string) int {
@@ -42,6 +43,7 @@ func Find(id string) int {
 func Add(id string) bool {
 	// Reading File
 	wDir, err := os.Getwd()
+	fmt.Println(wDir + "\\" + fileName)
 	data, err := ioutil.ReadFile(wDir + "\\" + fileName)
 	if err != nil {
 		log.Panicf("failed reading data from file: %s", err)
