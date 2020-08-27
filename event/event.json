@@ -1,15 +1,1 @@
-[
-    {
-        "type": "SESSION",
-        "id": "e6fa79ca-d142-4946-a134-5134f16a9b5e",
-        "start": 1569972082,
-        "end": 1569972690,
-        "children": [
-            {
-                "type": "EVENT",
-                "timestamp": 1569972683,
-                "name": "cart_loaded"
-            }
-        ]
-    }
-]
+[]

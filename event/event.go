@@ -1,4 +1,4 @@
-package main
+package event
 
 // importing the required packages
 import (
@@ -9,9 +9,7 @@ import (
 	"sort"
 )
 
-// var fileName string = "event\\event.json"
-// Temporary only for standalone use
-var fileName string = "event.json"
+var fileName string = "event\\event.json"
 
 type child struct {
 	Type      string `json:"type"`
@@ -27,6 +25,7 @@ type sessionObject struct {
 	Children []child `json:"children"`
 }
 
+// AddSessionStart Adding session object with start timestamp
 func AddSessionStart(id string, start int) bool {
 	// Check if there is already a session with refered id
 	if existingSession, index := findSession(id); existingSession != nil {
@@ -80,6 +79,7 @@ func AddSessionStart(id string, start int) bool {
 	return true
 }
 
+// AddSessionEnd Adding end timestamp to existing session object
 func AddSessionEnd(id string, end int) bool {
 	// Check if there is already a session with refered id
 	existingSession, index := findSession(id)
@@ -133,6 +133,7 @@ func AddSessionEnd(id string, end int) bool {
 	return true
 }
 
+// AddChildren Adding sorted child objects to children array of existing session object
 func AddChildren(id string, timestamp int, name string) bool {
 	// Check if there is already a session with refered id
 	existingSession, index := findSession(id)
@@ -217,10 +218,4 @@ func findSession(id string) (*sessionObject, int) {
 		}
 	}
 	return nil, -1
-}
-
-func main() {
-	AddChildren("tasos", 999999999999, "cart")
-	AddChildren("tasos", 888888888888, "cart")
-	AddChildren("tasos", 1523, "cart")
 }
