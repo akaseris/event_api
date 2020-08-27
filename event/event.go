@@ -28,7 +28,7 @@ type sessionObject struct {
 // AddSessionStart Adding session object with start timestamp
 func AddSessionStart(id string, start int) bool {
 	// Check if there is already a session with refered id
-	if existingSession, index := findSession(id); existingSession != nil {
+	if existingSession, index := FindSession(id); existingSession != nil {
 		log.Printf("Session already exists with index: %d", index)
 		return false
 	}
@@ -82,7 +82,7 @@ func AddSessionStart(id string, start int) bool {
 // AddSessionEnd Adding end timestamp to existing session object
 func AddSessionEnd(id string, end int) bool {
 	// Check if there is already a session with refered id
-	existingSession, index := findSession(id)
+	existingSession, index := FindSession(id)
 	if existingSession == nil {
 		log.Printf("Session does not exist")
 		return false
@@ -136,7 +136,7 @@ func AddSessionEnd(id string, end int) bool {
 // AddChildren Adding sorted child objects to children array of existing session object
 func AddChildren(id string, timestamp int, name string) bool {
 	// Check if there is already a session with refered id
-	existingSession, index := findSession(id)
+	existingSession, index := FindSession(id)
 	if existingSession == nil {
 		log.Printf("Session does not exist")
 		return false
@@ -193,7 +193,8 @@ func AddChildren(id string, timestamp int, name string) bool {
 	return true
 }
 
-func findSession(id string) (*sessionObject, int) {
+// FindSession Finds a session object based on a session_id
+func FindSession(id string) (*sessionObject, int) {
 	var arrData []sessionObject
 
 	// Reading File
