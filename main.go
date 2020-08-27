@@ -139,8 +139,33 @@ func handleEvents(jsonData []map[string]interface{}, w http.ResponseWriter) bool
 func get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
+	// Check for id in params
+	paramID, ok := r.URL.Query()["session_id"]
+	if !ok {
+		w.WriteHeader(http.StatusNonAuthoritativeInfo)
+		w.Write([]byte(`{"error": "session_id does not exist in parameters"}`))
+		return
+	}
+
+	// Get session object based on parameter id
+	sessionObject, index := event.FindSession(paramID[0])
+	if index < 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(`{"error": "Session Id in parameters is not registered"}`))
+		return
+	}
+
+	// Convert struct to json format
+	jsonData, err := json.Marshal(*sessionObject)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(`{"error": "Error processing the data"}`))
+		return
+	}
+
+	// Respond to client
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"message": "get called"}`))
+	w.Write([]byte(jsonData))
 }
 
 func post(w http.ResponseWriter, r *http.Request) {
@@ -194,8 +219,9 @@ func post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Respond to client
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(`{"message": "post called"}`))
+	w.Write([]byte(`{"message": "Input registered succesfully"}`))
 }
 
 func main() {
