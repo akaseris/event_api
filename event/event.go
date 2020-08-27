@@ -29,7 +29,7 @@ type sessionObject struct {
 func AddSessionStart(id string, start int) bool {
 	// Check if there is already a session with refered id
 	if existingSession, index := findSession(id); existingSession != nil {
-		log.Panicf("Session already exists with index: %d", index)
+		log.Printf("Session already exists with index: %d", index)
 		return false
 	}
 
@@ -41,7 +41,7 @@ func AddSessionStart(id string, start int) bool {
 	wDir, err := os.Getwd()
 	data, err := ioutil.ReadFile(wDir + "\\" + fileName)
 	if err != nil {
-		log.Panicf("failed reading data from file: %s", err)
+		log.Printf("failed reading data from file: %s", err)
 		return false
 	}
 
@@ -49,7 +49,7 @@ func AddSessionStart(id string, start int) bool {
 	var arrData []sessionObject
 	err = json.Unmarshal([]byte(data), &arrData)
 	if err != nil {
-		log.Panicf("failed processing data from file: %s", err)
+		log.Printf("failed processing data from file: %s", err)
 		return false
 	}
 
@@ -59,21 +59,21 @@ func AddSessionStart(id string, start int) bool {
 	// Creating file to overwrite the old one
 	newFile, err := os.Create(fileName)
 	if err != nil {
-		log.Panicf("failed creating file: %s", err)
+		log.Printf("failed creating file: %s", err)
 		return false
 	}
 
 	// Converting to compatible format
 	jsonData, err := json.Marshal(arrData)
 	if err != nil {
-		log.Panicf("failed prossesing data")
+		log.Printf("failed prossesing data")
 		return false
 	}
 
 	// Converting to prefered form and writing data to file
 	len, err := newFile.WriteString(string(jsonData))
 	if err != nil {
-		log.Fatalf("failed writing to file: %s with length %d", err, len)
+		log.Printf("failed writing to file: %s with length %d", err, len)
 		return false
 	}
 	return true
@@ -84,7 +84,7 @@ func AddSessionEnd(id string, end int) bool {
 	// Check if there is already a session with refered id
 	existingSession, index := findSession(id)
 	if existingSession == nil {
-		log.Panicf("Session does not exist")
+		log.Printf("Session does not exist")
 		return false
 	}
 
@@ -95,7 +95,7 @@ func AddSessionEnd(id string, end int) bool {
 	wDir, err := os.Getwd()
 	data, err := ioutil.ReadFile(wDir + "\\" + fileName)
 	if err != nil {
-		log.Panicf("failed reading data from file: %s", err)
+		log.Printf("failed reading data from file: %s", err)
 		return false
 	}
 
@@ -103,7 +103,7 @@ func AddSessionEnd(id string, end int) bool {
 	var arrData []sessionObject
 	err = json.Unmarshal([]byte(data), &arrData)
 	if err != nil {
-		log.Panicf("failed processing data from file: %s", err)
+		log.Printf("failed processing data from file: %s", err)
 		return false
 	}
 
@@ -113,21 +113,21 @@ func AddSessionEnd(id string, end int) bool {
 	// Creating file to overwrite the old one
 	newFile, err := os.Create(fileName)
 	if err != nil {
-		log.Panicf("failed creating file: %s", err)
+		log.Printf("failed creating file: %s", err)
 		return false
 	}
 
 	// Converting to compatible format
 	jsonData, err := json.Marshal(arrData)
 	if err != nil {
-		log.Panicf("failed prossesing data")
+		log.Printf("failed prossesing data")
 		return false
 	}
 
 	// Converting to prefered form and writing data to file
 	len, err := newFile.WriteString(string(jsonData))
 	if err != nil {
-		log.Fatalf("failed writing to file: %s with length %d", err, len)
+		log.Printf("failed writing to file: %s with length %d", err, len)
 		return false
 	}
 	return true
@@ -138,7 +138,7 @@ func AddChildren(id string, timestamp int, name string) bool {
 	// Check if there is already a session with refered id
 	existingSession, index := findSession(id)
 	if existingSession == nil {
-		log.Panicf("Session does not exist")
+		log.Printf("Session does not exist")
 		return false
 	}
 
@@ -150,7 +150,7 @@ func AddChildren(id string, timestamp int, name string) bool {
 	wDir, err := os.Getwd()
 	data, err := ioutil.ReadFile(wDir + "\\" + fileName)
 	if err != nil {
-		log.Panicf("failed reading data from file: %s", err)
+		log.Printf("failed reading data from file: %s", err)
 		return false
 	}
 
@@ -158,7 +158,7 @@ func AddChildren(id string, timestamp int, name string) bool {
 	var arrData []sessionObject
 	err = json.Unmarshal([]byte(data), &arrData)
 	if err != nil {
-		log.Panicf("failed processing data from file: %s", err)
+		log.Printf("failed processing data from file: %s", err)
 		return false
 	}
 
@@ -173,21 +173,21 @@ func AddChildren(id string, timestamp int, name string) bool {
 	// Creating file to overwrite the old one
 	newFile, err := os.Create(fileName)
 	if err != nil {
-		log.Panicf("failed creating file: %s", err)
+		log.Printf("failed creating file: %s", err)
 		return false
 	}
 
 	// Converting to compatible format
 	jsonData, err := json.Marshal(arrData)
 	if err != nil {
-		log.Panicf("failed prossesing data")
+		log.Printf("failed prossesing data")
 		return false
 	}
 
 	// Converting to prefered form and writing data to file
 	len, err := newFile.WriteString(string(jsonData))
 	if err != nil {
-		log.Fatalf("failed writing to file: %s with length %d", err, len)
+		log.Printf("failed writing to file: %s with length %d", err, len)
 		return false
 	}
 	return true
@@ -200,14 +200,14 @@ func findSession(id string) (*sessionObject, int) {
 	wDir, err := os.Getwd()
 	data, err := ioutil.ReadFile(wDir + "\\" + fileName)
 	if err != nil {
-		log.Panicf("failed reading data from file: %s", err)
+		log.Printf("failed reading data from file: %s", err)
 		return nil, -1
 	}
 
 	// Converting binary data to array of structs
 	err = json.Unmarshal([]byte(data), &arrData)
 	if err != nil {
-		log.Panicf("failed processing data from file: %s", err)
+		log.Printf("failed processing data from file: %s", err)
 		return nil, -1
 	}
 

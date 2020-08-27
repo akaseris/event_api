@@ -17,7 +17,7 @@ func Find(id string) int {
 	wDir, err := os.Getwd()
 	data, err := ioutil.ReadFile(wDir + "\\" + fileName)
 	if err != nil {
-		log.Panicf("failed reading data from file: %s", err)
+		log.Printf("failed reading data from file: %s", err)
 		return -2
 	}
 
@@ -25,7 +25,7 @@ func Find(id string) int {
 	var arrData []string
 	err = json.Unmarshal([]byte(data), &arrData)
 	if err != nil {
-		log.Panicf("failed processing data from file: %s", err)
+		log.Printf("failed processing data from file: %s", err)
 		return -2
 	}
 
@@ -44,7 +44,7 @@ func Add(id string) bool {
 	wDir, err := os.Getwd()
 	data, err := ioutil.ReadFile(wDir + "\\" + fileName)
 	if err != nil {
-		log.Panicf("failed reading data from file: %s", err)
+		log.Printf("failed reading data from file: %s", err)
 		return false
 	}
 
@@ -52,7 +52,7 @@ func Add(id string) bool {
 	var arrData []string
 	err = json.Unmarshal([]byte(data), &arrData)
 	if err != nil {
-		log.Panicf("failed processing data from file: %s", err)
+		log.Printf("failed processing data from file: %s", err)
 		return false
 	}
 
@@ -62,14 +62,14 @@ func Add(id string) bool {
 	// Creating file to overwrite the old one
 	newFile, err := os.Create(fileName)
 	if err != nil {
-		log.Fatalf("failed creating file: %s", err)
+		log.Printf("failed creating file: %s", err)
 		return false
 	}
 
 	// Converting to prefered form and writing data to file
 	len, err := newFile.WriteString("[\"" + strings.Join(arrData, "\",\"") + "\"]")
 	if err != nil {
-		log.Fatalf("failed writing to file: %s with length %d", err, len)
+		log.Printf("failed writing to file: %s with length %d", err, len)
 		return false
 	}
 
@@ -82,7 +82,7 @@ func Remove(index int) bool {
 	wDir, err := os.Getwd()
 	data, err := ioutil.ReadFile(wDir + "\\" + fileName)
 	if err != nil {
-		log.Panicf("failed reading data from file: %s", err)
+		log.Printf("failed reading data from file: %s", err)
 		return false
 	}
 
@@ -90,7 +90,7 @@ func Remove(index int) bool {
 	var arrData []string
 	err = json.Unmarshal([]byte(data), &arrData)
 	if err != nil {
-		log.Panicf("failed processing data from file: %s", err)
+		log.Printf("failed processing data from file: %s", err)
 		return false
 	}
 
@@ -100,7 +100,7 @@ func Remove(index int) bool {
 	// Creating file to overwrite the old one
 	newFile, err := os.Create(fileName)
 	if err != nil {
-		log.Fatalf("failed creating file: %s", err)
+		log.Printf("failed creating file: %s", err)
 		return false
 	}
 
@@ -113,7 +113,7 @@ func Remove(index int) bool {
 	}
 	len, err := newFile.WriteString(str)
 	if err != nil {
-		log.Fatalf("failed writing to file: %s with length %d", err, len)
+		log.Printf("failed writing to file: %s with length %d", err, len)
 		return false
 	}
 
