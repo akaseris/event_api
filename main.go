@@ -2,11 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 
+	"github.com/akaseris/event_api/event"
 	"github.com/akaseris/event_api/session"
 	"github.com/gorilla/mux"
 )
@@ -28,8 +28,20 @@ func handleSessionStart(jsonData []map[string]interface{}, w http.ResponseWriter
 				w.Write([]byte(`{"error": "Error searching for sessions"}`))
 				return false
 			} else {
-				session.Add(str)
+				timestamp, ok := jsonData[0]["timestamp"].(float64)
+				if !ok {
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(`{"error": "Timestamp is not an int"}`))
+					return false
+				}
+				sesOk := session.Add(str)
 				ActiveSession = str
+				evOk := event.AddSessionStart(ActiveSession, int(timestamp))
+				if !sesOk || !evOk {
+					w.WriteHeader(http.StatusInternalServerError)
+					w.Write([]byte(`{"error": "Error processing data"}`))
+					return false
+				}
 				return true
 			}
 		}
@@ -44,7 +56,7 @@ func handleSessionStart(jsonData []map[string]interface{}, w http.ResponseWriter
 		// Else catch the case where the first JSON was not of type SESSION_START and the id on the parameters is not in the active sessions
 	} else if paramIDIndex < 0 {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(`{"error": "session_id in parameters does not exist and there is no SESSION_START EVENT"}`))
+		w.Write([]byte(`{"error": "session_id is not registered and there is no SESSION_START EVENT"}`))
 		return false
 	}
 	// Return true if no condition is met to continue with the request
@@ -66,7 +78,19 @@ func handleSessionEnd(jsonData []map[string]interface{}, w http.ResponseWriter, 
 				w.Write([]byte(`{"error": "Error searching for sessions"}`))
 				return false
 			} else {
-				session.Remove(found)
+				timestamp, ok := jsonData[len(jsonData)-1]["timestamp"].(float64)
+				if !ok {
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(`{"error": "Timestamp is not an int"}`))
+					return false
+				}
+				sesOk := session.Remove(found)
+				evOk := event.AddSessionEnd(ActiveSession, int(timestamp))
+				if !sesOk || !evOk {
+					w.WriteHeader(http.StatusInternalServerError)
+					w.Write([]byte(`{"error": "Error processing data"}`))
+					return false
+				}
 				return true
 			}
 		}
@@ -95,9 +119,19 @@ func handleEvents(jsonData []map[string]interface{}, w http.ResponseWriter) bool
 			w.Write([]byte(`{"error": "Wrong event object structure"}`))
 			return false
 		}
-		fmt.Println(timestamp, ActiveSession, jsonData[i]["name"])
+		strName, ok := jsonData[i]["name"].(string)
+		if !ok {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(`{"error": "Event name is not a string"}`))
+			return false
+		}
 
-		// Create data manipulation package
+		// Adding event to children list sorted in the coresponding sessionId
+		if ok := event.AddChildren(ActiveSession, int(timestamp), strName); !ok {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(`{"error": "Error processing the data"}`))
+			return false
+		}
 	}
 	return true
 }
