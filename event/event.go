@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"sort"
 )
 
 // var fileName string = "event\\event.json"
@@ -163,6 +164,11 @@ func AddChildren(id string, timestamp int, name string) bool {
 	// Replacing old children object to updated one
 	arrData[index].Children = append(arrData[index].Children, childToInput)
 
+	// Sorting children by timestamp
+	sort.Slice(arrData[index].Children, func(i, j int) bool {
+		return arrData[index].Children[i].Timestamp < arrData[index].Children[j].Timestamp
+	})
+
 	// Creating file to overwrite the old one
 	newFile, err := os.Create(fileName)
 	if err != nil {
@@ -185,10 +191,6 @@ func AddChildren(id string, timestamp int, name string) bool {
 	}
 	return true
 }
-
-// func sortChildren(children []interface{}) bool {
-
-// }
 
 func findSession(id string) (*sessionObject, int) {
 	var arrData []sessionObject
@@ -218,5 +220,7 @@ func findSession(id string) (*sessionObject, int) {
 }
 
 func main() {
-
+	AddChildren("tasos", 999999999999, "cart")
+	AddChildren("tasos", 888888888888, "cart")
+	AddChildren("tasos", 1523, "cart")
 }
