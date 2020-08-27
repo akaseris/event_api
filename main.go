@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -10,7 +11,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var acceptedTypes = []string{"SESSION_START", "EVENT", "SESSION_END"}
+// ActiveSession Global var for active session
+var ActiveSession string
 
 func handleSessionStart(jsonData []map[string]interface{}, w http.ResponseWriter, paramID []string, paramIDIndex int) bool {
 	// Check if the first JSON is of type SESSION_START and it matches the id on the parameters
@@ -27,6 +29,7 @@ func handleSessionStart(jsonData []map[string]interface{}, w http.ResponseWriter
 				return false
 			} else {
 				session.Add(str)
+				ActiveSession = str
 				return true
 			}
 		}
@@ -45,6 +48,7 @@ func handleSessionStart(jsonData []map[string]interface{}, w http.ResponseWriter
 		return false
 	}
 	// Return true if no condition is met to continue with the request
+	ActiveSession = paramID[0]
 	return true
 }
 
@@ -76,6 +80,25 @@ func handleSessionEnd(jsonData []map[string]interface{}, w http.ResponseWriter, 
 		return false
 	}
 	// Return true if no condition is met to continue with the request
+	return true
+}
+
+func handleEvents(jsonData []map[string]interface{}, w http.ResponseWriter) bool {
+	for i := 0; i < len(jsonData); i++ {
+		if jsonData[i]["type"] == "SESSION_START" || jsonData[i]["type"] == "SESSION_END" {
+			continue
+		}
+
+		timestamp, ok := jsonData[i]["timestamp"].(float64)
+		if !ok || jsonData[i]["name"] == nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(`{"error": "Wrong event object structure"}`))
+			return false
+		}
+		fmt.Println(timestamp, ActiveSession, jsonData[i]["name"])
+
+		// Create data manipulation package
+	}
 	return true
 }
 
@@ -128,6 +151,9 @@ func post(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Handle EVENT
+	if ok := handleEvents(jsonData, w); !ok {
+		return
+	}
 
 	// Handle SESSION_END
 	if ok := handleSessionEnd(jsonData, w, paramID); !ok {
@@ -136,15 +162,6 @@ func post(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(`{"message": "post called"}`))
-}
-
-func checkParams(r *http.Request) bool {
-	query := r.URL.Query()
-	id := query.Get("session_ID")
-	if id == "123456789" {
-		return true
-	}
-	return false
 }
 
 func main() {
